@@ -11,6 +11,7 @@
     <properties>
         <kotlin.version>1.2.41</kotlin.version>
         <jvmTarget>1.8</jvmTarget>
+        <org.slf4j.version>1.8.0-beta2</org.slf4j.version>
         <jcommander.version>1.72</jcommander.version>
     </properties>
 
@@ -20,6 +21,19 @@
             <artifactId>kotlin-stdlib-jdk8</artifactId>
             <version>${kotlin.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${org.slf4j.version}</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.beust/jcommander -->
         <dependency>
             <groupId>com.beust</groupId>
