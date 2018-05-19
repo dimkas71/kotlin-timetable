@@ -6,18 +6,12 @@ import ua.compservice.command.MergeSheetsCommand
 import ua.compservice.exception.TimetableException
 import ua.compservice.util.loggerFor
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 
 
 val LOG = loggerFor<TimetableApplication>()
+
 val HOME_DIR = System.getProperty("user.dir").toString()
-
-fun mergeSheets(from: Path, to: Path, withTeam: Boolean = false) {
-
-
-
-}
 
 object TimetableApplication {
     @JvmStatic
@@ -50,15 +44,13 @@ object TimetableApplication {
                         throw TimetableException(message)
                     }
                     val to = homePath.resolve(mergeSheetsCommand.output)
-                    mergeSheets(from, to, mergeSheetsCommand.withTeam)
+                    mergeSheetsCommand.mergeSheets(from, to)
                 }
             }
             else -> {
                 commander.usage()
             }
         }
-
-
 
     }
 }
