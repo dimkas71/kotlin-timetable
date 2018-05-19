@@ -12,6 +12,7 @@ val DEFAULT_OUT = "output.xlsx"
 
 val LOG = loggerFor<MergeSheetsCommand>()
 val SHEET_NAME = "merged-sheets"
+val COLUMN_WITH_TEAM_BY_DEFUALT = 4
 
 @Parameters(commandNames = ["merge-sheets"], commandDescription = "Merge sheets from an input file to the output file")
 data class MergeSheetsCommand(
@@ -63,7 +64,8 @@ data class MergeSheetsCommand(
 
         val columnWithTeam = if (withTeam) {
             //Suppose we have got somehow a column number to insert in withTeam mode...
-            2
+            //TODO: Add implementation for finding column number to insert. Hint: use a column with a personnal number
+            COLUMN_WITH_TEAM_BY_DEFUALT
         } else {
             -1
         }
