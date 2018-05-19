@@ -68,6 +68,7 @@
     </dependency>
   </dependencies>
   <properties>
+    <poi.version>3.17</poi.version>
     <jcommander.version>1.72</jcommander.version>
     <kotlin.version>1.2.41</kotlin.version>
     <org.slf4j.version>1.8.0-beta2</org.slf4j.version>
