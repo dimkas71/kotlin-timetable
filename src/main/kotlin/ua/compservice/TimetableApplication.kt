@@ -3,15 +3,9 @@ package ua.compservice
 import com.beust.jcommander.JCommander
 import ua.compservice.command.HelpCommand
 import ua.compservice.command.MergeSheetsCommand
-import ua.compservice.exception.TimetableException
 import ua.compservice.util.loggerFor
-import java.nio.file.Files
-import java.nio.file.Paths
-
 
 val LOG = loggerFor<TimetableApplication>()
-
-val HOME_DIR = System.getProperty("user.dir").toString()
 
 object TimetableApplication {
     @JvmStatic
@@ -34,17 +28,7 @@ object TimetableApplication {
             "merge-sheets" -> {
                 mergeSheetsCommand.run {
                     LOG.debug("{}", mergeSheetsCommand)
-
-                    val homePath = Paths.get(HOME_DIR)
-                    val from = homePath.resolve(mergeSheetsCommand.input)
-
-                    if (!Files.exists(from)) {
-                        val message = "Merging sheets command: File $from does'nt exist"
-                        LOG.error("{}", message)
-                        throw TimetableException(message)
-                    }
-                    val to = homePath.resolve(mergeSheetsCommand.output)
-                    mergeSheetsCommand.mergeSheets(from, to)
+                    mergeSheetsCommand.mergeSheets()
                 }
             }
             else -> {
