@@ -6,6 +6,7 @@ import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ua.compservice.exception.TimetableException
 import ua.compservice.util.loggerFor
+import ua.compservice.util.toNormalizedString
 import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -18,6 +19,9 @@ val SHEET_NAME = "merged-sheets"
 val COLUMN_WITH_TEAM_BY_DEFUALT = 4
 
 val HOME_DIR = System.getProperty("user.dir").toString()
+
+val PERSONNEL_NUMBER_PATTERN = Regex("\\d{2}\\/\\d{4}\$")
+val NOT_FOUND = -1
 
 
 @Parameters(commandNames = ["merge-sheets"], commandDescription = "Merge sheets from an input file to the output file")
@@ -58,7 +62,7 @@ data class MergeSheetsCommand(
                         row.forEach { cell ->
 
                             val content = when (cell.cellTypeEnum) {
-                                CellType.NUMERIC -> cell.numericCellValue.toString()
+                                CellType.NUMERIC -> cell.numericCellValue.toNormalizedString()
                                 else -> cell.stringCellValue
                             }
                             list.add(
@@ -87,10 +91,10 @@ data class MergeSheetsCommand(
 
             val columnToInsert = if (withTeam) {
                 //Suppose we have got somehow a column number to insert in withTeam mode...
-                //TODO: Add implementation for finding column number to insert. Hint: use a column with a personnel number
-                COLUMN_WITH_TEAM_BY_DEFUALT
+                val cell = list.firstOrNull { if (it.content != null) it.content.matches(PERSONNEL_NUMBER_PATTERN) else false }
+                if (cell != null) cell.col + 1 else COLUMN_WITH_TEAM_BY_DEFUALT
             } else {
-                -1
+                NOT_FOUND
             }
 
             val wb = XSSFWorkbook()
