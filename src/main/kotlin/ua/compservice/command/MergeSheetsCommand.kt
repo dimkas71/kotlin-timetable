@@ -13,8 +13,6 @@ import java.nio.file.Paths
 
 val DEFAULT_OUT = "output.xlsx"
 
-val LOG = loggerFor<MergeSheetsCommand>()
-
 val SHEET_NAME = "merged-sheets"
 val COLUMN_WITH_TEAM_BY_DEFUALT = 4
 
@@ -139,5 +137,9 @@ data class MergeSheetsCommand(
         writeCellsToXLSX(readCellsFromXLSX())
 
 
+    }
+
+    companion object {
+        val LOG = loggerFor<MergeSheetsCommand>()
     }
 }
