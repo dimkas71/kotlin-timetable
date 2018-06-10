@@ -1,6 +1,7 @@
 package ua.compservice
 
 import com.beust.jcommander.JCommander
+import ua.compservice.command.CheckPersonnelNumberCommand
 import ua.compservice.command.HelpCommand
 import ua.compservice.command.MergeCommand
 import ua.compservice.command.MergeSheetsCommand
@@ -16,11 +17,14 @@ object TimetableApplication {
 
         val mergeSheetsCommand = MergeSheetsCommand()
 
+        val checkPersonnelNumberCommand = CheckPersonnelNumberCommand()
+
         val commander = JCommander.newBuilder()
                 .addObject(this)
                 .addCommand(helpCommand)
                 .addCommand(mergeCommamnd)
                 .addCommand(mergeSheetsCommand)
+                .addCommand(checkPersonnelNumberCommand)
                 .args(args)
                 .build()
 
@@ -40,6 +44,10 @@ object TimetableApplication {
                     LOG.debug("{}", mergeSheetsCommand)
                     mergeSheetsCommand.mergeSheets()
                 }
+            }
+            "check-pn" -> {
+                LOG.debug("{}", checkPersonnelNumberCommand)
+                checkPersonnelNumberCommand.check()
             }
             else -> {
                 commander.usage()
