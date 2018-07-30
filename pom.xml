@@ -9,7 +9,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <kotlin.version>1.2.50</kotlin.version>
+        <kotlin.version>1.2.51</kotlin.version>
         <jvmTarget>1.8</jvmTarget>
         <org.slf4j.version>1.8.0-beta2</org.slf4j.version>
         <jcommander.version>1.72</jcommander.version>
@@ -117,7 +117,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.21.0</version>
+                <version>2.22.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.junit.platform</groupId>
