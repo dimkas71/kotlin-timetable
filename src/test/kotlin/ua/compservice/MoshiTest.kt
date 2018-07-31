@@ -3,6 +3,7 @@ package ua.compservice
 import com.squareup.moshi.*
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class MoshiTest {
@@ -16,6 +17,8 @@ class MoshiTest {
                 .build()
     }
 
+
+    @Disabled
     @Test
     fun `write json with moshi`() {
 
@@ -29,6 +32,7 @@ class MoshiTest {
     }
 
 
+    @Disabled
     @Test
     fun `read json with moshi`() {
         val adapter = moshi.adapter(Person::class.java)

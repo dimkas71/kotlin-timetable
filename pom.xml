@@ -94,7 +94,6 @@
             <artifactId>moshi-kotlin</artifactId>
             <version>${moshi.version}</version>
         </dependency>
-
     </dependencies>
 
     <build>

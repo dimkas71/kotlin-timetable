@@ -1,10 +1,7 @@
 package ua.compservice
 
 import com.beust.jcommander.JCommander
-import ua.compservice.command.CheckPersonnelNumberCommand
-import ua.compservice.command.HelpCommand
-import ua.compservice.command.MergeCommand
-import ua.compservice.command.MergeSheetsCommand
+import ua.compservice.command.*
 import ua.compservice.util.loggerFor
 
 val LOG = loggerFor<TimetableApplication>()
@@ -19,12 +16,15 @@ object TimetableApplication {
 
         val checkPersonnelNumberCommand = CheckPersonnelNumberCommand()
 
+        val convertTimesheetCommand = ConvertTimesheetCommand()
+
         val commander = JCommander.newBuilder()
                 .addObject(this)
                 .addCommand(helpCommand)
                 .addCommand(mergeCommamnd)
                 .addCommand(mergeSheetsCommand)
                 .addCommand(checkPersonnelNumberCommand)
+                .addCommand(convertTimesheetCommand)
                 .args(args)
                 .build()
 
@@ -48,6 +48,10 @@ object TimetableApplication {
             "check-pn" -> {
                 LOG.debug("{}", checkPersonnelNumberCommand)
                 checkPersonnelNumberCommand.check()
+            }
+            "convert-timesheet" -> {
+                LOG.debug("{}", convertTimesheetCommand)
+                convertTimesheetCommand.convert()
             }
             else -> {
                 commander.usage()
