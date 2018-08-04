@@ -2,5 +2,4 @@
 target/
 *.iml
 log4j.log
-*.xlsx
 dependency-reduced-pom.xml
