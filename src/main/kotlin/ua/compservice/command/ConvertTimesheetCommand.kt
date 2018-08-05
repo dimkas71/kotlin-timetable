@@ -23,6 +23,9 @@ data class ConvertTimesheetCommand(
         @Parameter(names = ["-f", "--file"], description = "Input file in xlsx format(required)", required = true)
         var input: String = "",
 
+        @Parameter(names = ["-r", "--rule"], description = "File with time convertion rules", required = true)
+        var rule: String = "",
+
         @Parameter(names = ["-m", "--month"], description = "Month for a timesheet convertion should be set", required = true)
         var month: Int = 0,
 
@@ -174,8 +177,63 @@ data class ConvertTimesheetCommand(
 
         }
 
+        fun loadRuleItems(): List<RuleItem> {
+
+            val homeDir = System.getProperty("user.dir")
+            val list = mutableListOf<Cell>()
+
+            val p = Paths.get(homeDir).resolve(rule)
+
+            Files.exists(p).let {
+                val workbook = XSSFWorkbook(p.toFile())
+                workbook.use {
+                    val sheet = workbook.getSheetAt(0)
+                    sheet.forEach {row ->
+                        row.forEach { cell ->
+                            val content = when (cell.cellTypeEnum) {
+                                CellType.NUMERIC -> cell.numericCellValue.toNormalizedString()
+                                else -> cell.stringCellValue
+                            }
+                            list.add(Cell(cell.rowIndex, cell.columnIndex, content, p.toFile().nameWithoutExtension))
+                        }
+                    }
+                }
+            }
+
+            val header = list.filter { it.content.equals("StopNet") }.first()
+
+            val headerRow = header.row
+            val colStopNet = header.col
+            val colId = header.col - 1
+            val colOneC = header.col + 5
+            val colDigitalCode = header.col + 6
+
+
+            return list.filter { it.row > headerRow }
+                    .groupBy { it.row }
+                    .map {
+
+                        val id: Int = it.value.filter { c -> c.col == colId }.first().content?.toInt() ?: 0
+                        val stopNetCode: String = it.value.filter { c -> c.col == colStopNet }.first().content ?: ""
+                        val oneCCode: String = it.value.filter { c -> c.col == colOneC }.first().content ?: ""
+                        val dc = "0" + it.value.filter { c -> c.col == colDigitalCode }.first().content ?: ""
+
+                        val digitalCode: String = dc.substring(dc.length - 2, dc.length)
+
+
+
+                        RuleItem(id, stopNetCode, oneCCode, digitalCode)
+
+                    }.toList()
+        }
+
+        val ruleItems: List<RuleItem> = loadRuleItems()
+
+        println(ruleItems)
+
         val list = readCells()
         val items = timeTableItems(list, listParams(list))
+
         writeTableitems(items)
 
     }
@@ -185,6 +243,9 @@ data class Cell(val row: Int, val col: Int, val content: String?, val fileName: 
 data class SheetsParams(val rowFrom: Int, val rowTo: Int,
                         val personnelNumberCol: Int, val fioColumn: Int,
                         val firstDayCol: Int, val lastDayCol: Int)
+
+data class RuleItem(val id: Int, val stopNetCode: String, val oneCCode: String, val digitalCode: String)
+
 
 data class TimeClassifier(@Json(name = "БуквенныйКод") val literal: String, @Json(name = "ЦифровойКод") val digits: String)
 
