@@ -138,15 +138,25 @@ data class ConvertTimesheetCommand(
 
         }
 
-        fun timeTableItems(list: List<Cell>, params: SheetsParams): List<TimetableItem> {
-
-           list.filter { it?.row >= params.rowFrom && it?.row <= params.rowTo}
+        fun timeTableItems(list: List<Cell>, params: SheetsParams): List<TimetableItem> = list.filter { it?.row >= params.rowFrom && it?.row <= params.rowTo}
                    .groupBy { it.row }
+                   .map {
+
+                       val fio = it.value.find { it.col == params.fioColumn }?.content ?: ""
+                       val personnelNumber = it.value.find { it.col == params.personnelNumberCol }?.content ?: ""
+
+                       val days = (1..month).map {
+                           //TODO: make conversion from cells values to the item....
+                          val (qualifier, value) = Pair(TimeClassifier("р", "01"), 8.0)
+
+                          Item(day = it, qualifier = qualifier, value = value)
+                       }.toList()
 
 
-            return listOf()
+                       TimetableItem(personnel = personnelNumber, employee = fio, items = days)
 
-        }
+                   }.toList()
+
 
         fun writeTableitems(items: List<TimetableItem>) {
 
@@ -169,11 +179,12 @@ data class ConvertTimesheetCommand(
 
             val p = Paths.get(homeDir).resolve(output)
             val os = FileOutputStream(p.toFile())
-            val writer = os.bufferedWriter()
-            writer.write(json)
 
-            writer.flush()
-            os.close()
+            os.use {
+                val writer = os.bufferedWriter()
+                writer.write(json)
+                writer.flush()
+            }
 
         }
 
@@ -229,8 +240,6 @@ data class ConvertTimesheetCommand(
 
         val ruleItems: List<RuleItem> = loadRuleItems()
 
-        println(ruleItems)
-
         val list = readCells()
         val items = timeTableItems(list, listParams(list))
 
@@ -246,6 +255,10 @@ data class SheetsParams(val rowFrom: Int, val rowTo: Int,
 
 data class RuleItem(val id: Int, val stopNetCode: String, val oneCCode: String, val digitalCode: String)
 
+fun  List<RuleItem>.findByStopNetcode(code: String): TimeClassifier {
+    val found = this.filter { it.stopNetCode.equals(code) }.first()
+    return TimeClassifier(literal = found.oneCCode, digits = found.digitalCode)
+}
 
 data class TimeClassifier(@Json(name = "БуквенныйКод") val literal: String, @Json(name = "ЦифровойКод") val digits: String)
 
