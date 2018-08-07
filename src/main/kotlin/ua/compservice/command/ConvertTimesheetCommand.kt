@@ -32,6 +32,9 @@ data class ConvertTimesheetCommand(
         @Parameter(names = ["-o", "--output"], description = "Optional output file, by default equals to output.json", required = false)
         var output: String = "output.json"
 ) {
+
+    var days: Int = 0
+
     fun convert() {
 
         LOG.debug("{}", this)
@@ -127,7 +130,9 @@ data class ConvertTimesheetCommand(
             val cal = Calendar.getInstance()
             cal.set(Calendar.MONTH, month - 1)
 
-            val lastDayCol = firstDayColumn + cal.getActualMaximum(Calendar.DAY_OF_MONTH) - 1
+            days = cal.getActualMaximum(Calendar.DAY_OF_MONTH)
+
+            val lastDayCol = firstDayColumn + days - 1
 
 
             val params = SheetsParams(from, to, personnelColumn, fioColumn, firstDayColumn, lastDayCol)
@@ -138,25 +143,43 @@ data class ConvertTimesheetCommand(
 
         }
 
-        fun timeTableItems(list: List<Cell>, params: SheetsParams): List<TimetableItem> = list.filter { it?.row >= params.rowFrom && it?.row <= params.rowTo}
-                   .groupBy { it.row }
-                   .map {
+        fun parseCell(content: String?): List<Pair<TimeClassifier, Double>> {
 
-                       val fio = it.value.find { it.col == params.fioColumn }?.content ?: ""
-                       val personnelNumber = it.value.find { it.col == params.personnelNumberCol }?.content ?: ""
-
-                       val days = (1..month).map {
-                           //TODO: make conversion from cells values to the item....
-                          val (qualifier, value) = Pair(TimeClassifier("р", "01"), 8.0)
-
-                          Item(day = it, qualifier = qualifier, value = value)
-                       }.toList()
+            val NEW_LINE = "\n"
 
 
-                       TimetableItem(personnel = personnelNumber, employee = fio, items = days)
+            content?.split(NEW_LINE)?.filter { it.isNotEmpty() }?.forEach { println("value $it") }
 
-                   }.toList()
+            return listOf(Pair(TimeClassifier("р", "01"), 8.0), Pair(TimeClassifier("рв", "06"), 8.0))
 
+        }
+
+        fun timeTableItems(list: List<Cell>, params: SheetsParams): List<TimetableItem> {
+
+            return list.filter { it?.row >= params.rowFrom && it?.row <= params.rowTo }
+                    .groupBy { it.row }
+                    .map {entry ->
+
+                        val fio = entry.value.find { it.col == params.fioColumn }?.content ?: ""
+                        val personnelNumber = entry.value.find { it.col == params.personnelNumberCol }?.content ?: ""
+
+                        val days = (1..days).flatMap {day ->
+                            //TODO: make conversion from cell values to the item....
+
+                            val content = entry.value.filter { it.col == params.firstDayCol + day - 1 }.map { it.content }.first()
+
+                            val pairs = parseCell(content)
+
+
+                            pairs.map { Item(day = day, qualifier = it.first, value = it.second) }.toList()
+
+                        }.toList()
+
+
+                        TimetableItem(personnel = personnelNumber, employee = fio, items = days)
+
+                    }.toList()
+        }
 
         fun writeTableitems(items: List<TimetableItem>) {
 
