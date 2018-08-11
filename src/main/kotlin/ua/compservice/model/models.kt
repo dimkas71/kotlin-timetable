@@ -10,7 +10,7 @@ data class SheetsParams(val rowFrom: Int, val rowTo: Int,
                         val personnelNumberCol: Int, val fioColumn: Int,
                         val firstDayCol: Int, val lastDayCol: Int)
 
-data class RuleItem(val id: Int, val stopNetCode: String, val oneCCode: String, val digitalCode: String)
+data class RuleItem(val id: Int, val stopNetCode: String, val oneCCode: String, val digitalCode: String, val unload: Boolean)
 
 fun  List<RuleItem>.findByStopNetcode(code: String): TimeClassifier {
     val found = this.filter { it.stopNetCode.equals(code) }.first()

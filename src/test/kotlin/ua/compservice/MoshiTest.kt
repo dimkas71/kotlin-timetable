@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import ua.compservice.model.Item
+import ua.compservice.model.TimeClassifier
+import ua.compservice.model.TimetableItem
 
 class MoshiTest {
 
@@ -144,10 +147,3 @@ class MoshiTest {
 }
 
 data class Person(val name: String, val age: Int)
-
-data class TimetableItem(@Json(name = "ТабельныйНомер") val personnel: String, @Json(name = "ФИО") val employee: String,
-                        @Json(name = "Дни") val items: List<Item>)
-
-data class Item(@Json(name = "НомерДня") val day: Int, @Json(name = "Классификатор") val qualifier:TimeClassifier, @Json(name = "Часов") val value: Double)
-
-data class TimeClassifier(@Json(name = "БуквенныйКод") val literal: String, @Json(name = "ЦифровойКод") val digits: String)

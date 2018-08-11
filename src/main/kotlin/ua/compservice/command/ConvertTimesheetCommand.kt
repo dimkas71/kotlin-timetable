@@ -241,6 +241,11 @@ data class ConvertTimesheetCommand(
             val colId = header.col - 1
             val colOneC = header.col + 5
             val colDigitalCode = header.col + 6
+            val colUnload = header.col + 8
+
+            val YES = "yes"
+            val NO = "no"
+
 
 
             return list.filter { it.row > headerRow }
@@ -254,9 +259,11 @@ data class ConvertTimesheetCommand(
 
                         val digitalCode: String = dc.substring(dc.length - 2, dc.length)
 
+                        val unload: Boolean = (it.value.filter { c -> c.col == colUnload }.first().content ?: NO).equals(YES)
 
 
-                        RuleItem(id, stopNetCode, oneCCode, digitalCode)
+
+                        RuleItem(id, stopNetCode, oneCCode, digitalCode, unload)
 
                     }.toList()
         }
