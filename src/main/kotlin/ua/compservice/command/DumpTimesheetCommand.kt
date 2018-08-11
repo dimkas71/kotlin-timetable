@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameters
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ua.compservice.LOG
+import ua.compservice.model.Cell
 import ua.compservice.util.toNormalizedString
 import java.io.File
 import java.nio.file.Files
