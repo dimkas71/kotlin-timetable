@@ -4,6 +4,7 @@ import com.beust.jcommander.Parameter
 import com.beust.jcommander.Parameters
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import ua.compservice.model.Cell
 import ua.compservice.util.loggerFor
 import ua.compservice.util.toNormalizedString
 import java.nio.file.Files
@@ -14,7 +15,6 @@ data class CheckPersonnelNumberCommand(
         @Parameter(description = "list of files to check", required = true)
         var files: List<String> = mutableListOf()) {
     fun check() {
-        data class Cell(val row: Int , val col: Int, val content: String, val fileName: String)
 
         val cells = mutableListOf<Cell>()
 
@@ -55,13 +55,13 @@ data class CheckPersonnelNumberCommand(
 
             val cellsToCheck = it.value
 
-            val col = cellsToCheck.filter { cell -> cell.content.matches(PERSONNEL_NUMBER_PATTERN)}.first().col
+            val col = cellsToCheck.filter { cell -> cell.content?.matches(PERSONNEL_NUMBER_PATTERN) ?: false}.first().col
 
 
             val logger = loggerFor<CheckPersonnelNumberCommand>()
 
             cellsToCheck.filter {it.col == col}
-                    .filter { !it.content.matches(PERSONNEL_NUMBER_PATTERN) }  //all cells that don't match a personnel number....
+                    .filter { !(it.content?.matches(PERSONNEL_NUMBER_PATTERN) ?: false)}  //all cells that don't match a personnel number....
                     .forEach {
 
                         val message = "Row: ${it.row + 1}, the personnel number ${it.content} is not correct"
