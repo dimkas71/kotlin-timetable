@@ -18,6 +18,8 @@ object TimetableApplication {
 
         val convertTimesheetCommand = ConvertTimesheetCommand()
 
+        val dumpTimesheetCommand = DumpTimesheetCommand()
+
         val commander = JCommander.newBuilder()
                 .addObject(this)
                 .addCommand(helpCommand)
@@ -25,6 +27,7 @@ object TimetableApplication {
                 .addCommand(mergeSheetsCommand)
                 .addCommand(checkPersonnelNumberCommand)
                 .addCommand(convertTimesheetCommand)
+                .addCommand(dumpTimesheetCommand)
                 .args(args)
                 .build()
 
@@ -52,6 +55,10 @@ object TimetableApplication {
             "convert-timesheet" -> {
                 LOG.debug("{}", convertTimesheetCommand)
                 convertTimesheetCommand.convert()
+            }
+            "dump-timesheet-values" -> {
+                LOG.debug("{}", dumpTimesheetCommand)
+                dumpTimesheetCommand.dump()
             }
             else -> {
                 commander.usage()
