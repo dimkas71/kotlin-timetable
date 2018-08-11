@@ -2,7 +2,6 @@ package ua.compservice.command
 
 import com.beust.jcommander.Parameter
 import com.beust.jcommander.Parameters
-import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

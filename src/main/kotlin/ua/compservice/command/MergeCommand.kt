@@ -4,6 +4,7 @@ import com.beust.jcommander.Parameter
 import com.beust.jcommander.Parameters
 import org.apache.poi.ss.usermodel.CellType
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
+import ua.compservice.model.Cell
 
 import ua.compservice.util.loggerFor
 import ua.compservice.util.toNormalizedString
@@ -28,8 +29,6 @@ data class MergeCommand(
     fun merge() {
 
         val HOME_DIR = System.getProperty("user.dir")
-
-        data class Cell(val row: Int, val col: Int, val content: String?, val fileName: String)
 
         LOG.debug("{}", this)
 
