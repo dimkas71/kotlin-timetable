@@ -46,6 +46,7 @@ class DumpTimesheetCommand(
                         row.forEach { cell ->
                             val content = when (cell.cellTypeEnum) {
                                 CellType.NUMERIC -> cell.numericCellValue.toNormalizedString()
+                                CellType.FORMULA -> ""
                                 else -> cell.stringCellValue
                             }
                             list.add(Cell(cell.rowIndex, cell.columnIndex, content, p.toFile().nameWithoutExtension))
