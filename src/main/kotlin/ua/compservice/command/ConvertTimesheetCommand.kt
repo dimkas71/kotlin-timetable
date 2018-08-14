@@ -268,7 +268,9 @@ data class ConvertTimesheetCommand(
                     }.toList()
         }
 
-        val ruleItems: List<RuleItem> = loadRuleItems()
+        var ruleItems: List<RuleItem> = mutableListOf<RuleItem>()
+
+        ruleItems = ruleItems.load(Paths.get(System.getProperty("user.dir")).resolve(rule).toFile().absolutePath)
 
         val list = readCells()
         val items = timeTableItems(list, listParams(list))
