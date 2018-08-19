@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvFileSource
 import ua.compservice.model.RuleItem
+import ua.compservice.model.load
 
 
 class `Cells timesheet converters` {
@@ -14,18 +15,20 @@ class `Cells timesheet converters` {
 
     @BeforeEach
     fun setUp() {
-
+       rules = listOf<RuleItem>().load("src/test/resources/conversion_table.xlsx")
     }
 
     @Test
     fun `first test`() {
-        Assertions.assertTrue(true, "Should be true")
+        Assertions.assertTrue(rules.size > 0, "Rules should be initialized...")
     }
 
     @ParameterizedTest
     @CsvFileSource(resources = ["/test.csv"], delimiter = ';')
     fun `test`(source: String, target: String) {
-        println(source)
+
+
+
     }
 
 }

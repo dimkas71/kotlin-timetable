@@ -2,6 +2,7 @@ package ua.compservice.model
 
 import com.squareup.moshi.Json
 import org.apache.poi.ss.usermodel.CellType
+import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import ua.compservice.util.toNormalizedString
 import java.nio.file.Files
@@ -31,11 +32,16 @@ fun List<RuleItem>.load(rules: String): List<RuleItem> {
         val workbook = XSSFWorkbook(p.toFile())
         workbook.use {
             val sheet = workbook.getSheetAt(0)
+            val evaluator = XSSFFormulaEvaluator(workbook)
+
             sheet.forEach {row ->
                 row.forEach { cell ->
                     val content = when (cell.cellTypeEnum) {
                         CellType.NUMERIC -> cell.numericCellValue.toNormalizedString()
-
+                        CellType.FORMULA -> when (cell.cachedFormulaResultTypeEnum) {
+                            CellType.NUMERIC -> cell.numericCellValue.toNormalizedString()
+                            else -> cell.richStringCellValue.toString()
+                        }
                         else -> cell.stringCellValue
                     }
                     list.add(Cell(cell.rowIndex, cell.columnIndex, content, p.toFile().nameWithoutExtension))
@@ -66,7 +72,10 @@ fun List<RuleItem>.load(rules: String): List<RuleItem> {
                 val oneCCode: String = it.value.filter { c -> c.col == colOneC }.first().content ?: ""
                 val dc = "0" + it.value.filter { c -> c.col == colDigitalCode }.first().content ?: ""
 
-                val digitalCode: String = dc.substring(dc.length - 2, dc.length)
+                val digitalCode: String = when (dc.length) {
+                    0, 1 -> ""
+                    else -> dc.substring(dc.length - 2, dc.length)
+                }
 
                 val unload: Boolean = (it.value.filter { c -> c.col == colUnload }.first().content ?: NO).equals(YES)
 
