@@ -22,11 +22,29 @@ class `Cells timesheet converters` {
     fun `test`(source: String, target: String) {
 
         val classifier = REGEX.find(source)?.groups?.get("classifier")?.value ?: ""
+        val time = REGEX.find(source)?.groups?.get("time")?.value ?: ""
 
-        val converted = RULES.find { it.stopNetCode.equals(classifier.trim()) }?.oneCCode
+        val splittedTime = time.split(":")
+        println(splittedTime)
 
-        if (converted == null) println(classifier)
+        var timeValue = 0
 
+        if (splittedTime.size != 0 && !"-".equals(splittedTime[0])) {
+            timeValue = splittedTime[0].toInt() + Math.round(splittedTime[1].toDouble() / 60).toInt()
+        }
+
+        val foundItem = RULES.find { it.stopNetCode.equals(classifier.trim()) }
+
+
+        val res = when (foundItem) {
+            null -> ""
+            else -> {
+                if (!foundItem.unload) ""
+                else "${foundItem.oneCCode}${if (timeValue == 0) " " else " $timeValue"}"
+            }
+        }
+
+        println(res)
 
 
     }
